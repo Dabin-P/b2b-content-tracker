@@ -20,7 +20,7 @@
     </div>
 
     <div class="metrics">
-      <div class="metric"><div class="label">Channels tracked</div><div class="value" id="m-channels">18</div><div class="sub">4 platforms</div></div>
+      <div class="metric"><div class="label">Channels tracked</div><div class="value" id="m-channels">—</div><div class="sub">4 platforms</div></div>
       <div class="metric"><div class="label">Viral this week</div><div class="value" id="m-viral">—</div><div class="sub">3x+ avg views</div></div>
       <div class="metric"><div class="label">Saved ideas</div><div class="value" id="m-ideas">—</div><div class="sub">in vault</div></div>
       <div class="metric"><div class="label">Hooks analyzed</div><div class="value" id="m-hooks">—</div><div class="sub">this month</div></div>
@@ -43,7 +43,7 @@
         <button class="pf" onclick="filterPlatform(this,'tt')">TikTok</button>
       </div>
       <div class="viral-list" id="viral-list"></div>
-      <button class="btn-secondary full-width" onclick="loadMoreViral()">Load more</button>
+      <button class="btn-secondary full-width" onclick="loadMoreViral()">Refresh</button>
     </div>
 
     <!-- CHANNEL TRACKER -->
@@ -120,6 +120,43 @@
       <div class="modal-footer">
         <button class="btn-primary" onclick="saveSettings()">Save</button>
         <button class="btn-secondary" onclick="closeSettings()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD CHANNEL MODAL -->
+  <div id="add-channel-overlay" class="overlay hidden" onclick="closeAddOutside(event)">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Add channel</span>
+        <button class="modal-close" onclick="closeAddChannel()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="field-label">Channel name *</div>
+        <input type="text" id="new-channel-name" placeholder="e.g. Klaviyo" />
+
+        <div class="field-label" style="margin-top:1rem">YouTube Channel ID (optional)</div>
+        <input type="text" id="new-channel-id" placeholder="e.g. UCNlBODbbfPKT7PQfkKPTa8A" />
+        <div style="font-size:11px;color:#aac0d8;margin-top:4px">
+          YouTube channel page → View page source → search "channelId"
+        </div>
+
+        <div class="field-label" style="margin-top:1rem">YouTube URL (optional)</div>
+        <input type="text" id="new-channel-yt" placeholder="https://www.youtube.com/@channel" />
+
+        <div class="field-label" style="margin-top:1rem">LinkedIn URL (optional)</div>
+        <input type="text" id="new-channel-li" placeholder="https://www.linkedin.com/company/..." />
+
+        <div class="field-label" style="margin-top:1rem">Tier</div>
+        <select id="new-channel-tier">
+          <option value="enterprise">Enterprise brand</option>
+          <option value="growing" selected>Fast-growing brand</option>
+          <option value="founders">Founder personal brand</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-primary" onclick="saveNewChannel()">Add channel</button>
+        <button class="btn-secondary" onclick="closeAddChannel()">Cancel</button>
       </div>
     </div>
   </div>
