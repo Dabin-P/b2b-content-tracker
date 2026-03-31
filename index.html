@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>B2B Ecommerce Content Tracker</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="dash">
+
+    <div class="top-bar">
+      <div>
+        <h1>B2B ecommerce content tracker</h1>
+        <span class="week-label" id="week-label">Loading...</span>
+      </div>
+      <div class="top-actions">
+        <button class="btn-secondary" onclick="openSettings()">Settings</button>
+      </div>
+    </div>
+
+    <div class="metrics">
+      <div class="metric"><div class="label">Channels tracked</div><div class="value" id="m-channels">18</div><div class="sub">4 platforms</div></div>
+      <div class="metric"><div class="label">Viral this week</div><div class="value" id="m-viral">—</div><div class="sub">3x+ avg views</div></div>
+      <div class="metric"><div class="label">Saved ideas</div><div class="value" id="m-ideas">—</div><div class="sub">in vault</div></div>
+      <div class="metric"><div class="label">Hooks analyzed</div><div class="value" id="m-hooks">—</div><div class="sub">this month</div></div>
+    </div>
+
+    <div class="tab-row">
+      <button class="tab active" onclick="switchTab('viral', this)">Viral finder</button>
+      <button class="tab" onclick="switchTab('channels', this)">Channel tracker</button>
+      <button class="tab" onclick="switchTab('analyze', this)">Hook analyzer</button>
+      <button class="tab" onclick="switchTab('ideas', this)">Idea vault</button>
+    </div>
+
+    <!-- VIRAL FINDER -->
+    <div id="tab-viral" class="panel active">
+      <div class="platform-filter">
+        <button class="pf on" onclick="filterPlatform(this,'all')">All</button>
+        <button class="pf" onclick="filterPlatform(this,'yt')">YouTube</button>
+        <button class="pf" onclick="filterPlatform(this,'li')">LinkedIn</button>
+        <button class="pf" onclick="filterPlatform(this,'ig')">Instagram</button>
+        <button class="pf" onclick="filterPlatform(this,'tt')">TikTok</button>
+      </div>
+      <div class="viral-list" id="viral-list"></div>
+      <button class="btn-secondary full-width" onclick="loadMoreViral()">Load more</button>
+    </div>
+
+    <!-- CHANNEL TRACKER -->
+    <div id="tab-channels" class="panel">
+      <div class="tier-label">Enterprise brands</div>
+      <div class="channel-grid" id="channels-enterprise"></div>
+      <div class="tier-label">Fast-growing brands</div>
+      <div class="channel-grid" id="channels-growing"></div>
+      <div class="tier-label">Founder personal brands</div>
+      <div class="channel-grid" id="channels-founders"></div>
+    </div>
+
+    <!-- HOOK ANALYZER -->
+    <div id="tab-analyze" class="panel">
+      <div class="section-title">Paste a title, hook, or post to analyze</div>
+      <textarea id="hook-input" class="idea-area" placeholder="e.g. 'The B2B onboarding mistake costing you 40% of your customers'"></textarea>
+      <div class="action-row">
+        <button class="btn-primary" onclick="analyzeHook()">Analyze hook</button>
+        <button class="btn-secondary" onclick="generateHooks()">Generate similar hooks</button>
+        <button class="btn-secondary" onclick="generateScript()">Write full script</button>
+      </div>
+      <div class="starters-box">
+        <div class="starters-label">Quick starters</div>
+        <div class="starters-row">
+          <button class="btn-secondary sm" onclick="useStarter('The reason 80% of B2B customers never reorder (and how to fix it)')">Churn angle</button>
+          <button class="btn-secondary sm" onclick="useStarter('We analyzed 100 B2B ecommerce brands. Here\'s what the top 1% do differently.')">Data angle</button>
+          <button class="btn-secondary sm" onclick="useStarter('Stop losing B2B deals to self-serve portals. Do this instead.')">Contrarian angle</button>
+          <button class="btn-secondary sm" onclick="useStarter('I spent $50K on B2B ads. Here\'s why I\'ll never do it again.')">Story angle</button>
+        </div>
+      </div>
+      <div id="analyze-result" class="result-box hidden"></div>
+    </div>
+
+    <!-- IDEA VAULT -->
+    <div id="tab-ideas" class="panel">
+      <div class="section-title">New idea</div>
+      <textarea id="idea-input" class="idea-area" placeholder="Drop a reference, hook idea, or script note here..."></textarea>
+      <div class="action-row">
+        <button class="btn-primary" onclick="saveIdea()">Save idea</button>
+        <button class="btn-secondary" onclick="developIdea()">Develop into script</button>
+        <button class="btn-secondary" onclick="repurposeIdea()">Repurpose across platforms</button>
+      </div>
+      <div class="notion-row">
+        <span>Notion sync</span>
+        <span id="notion-status" class="notion-status-dot off"></span>
+        <span id="notion-status-text" class="notion-status-label">Not connected</span>
+        <button class="btn-secondary sm" onclick="openSettings()">Configure</button>
+      </div>
+      <div style="margin-top:1.5rem">
+        <div class="section-title">Saved ideas</div>
+        <div id="idea-list" class="viral-list"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SETTINGS MODAL -->
+  <div id="settings-overlay" class="overlay hidden" onclick="closeSettingsOutside(event)">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Settings</span>
+        <button class="modal-close" onclick="closeSettings()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="field-label">Anthropic API key</div>
+        <input type="password" id="s-anthropic" placeholder="sk-ant-..." />
+        <div class="field-label" style="margin-top:1rem">YouTube Data API key</div>
+        <input type="password" id="s-youtube" placeholder="AIza..." />
+        <div class="field-label" style="margin-top:1rem">Notion API key</div>
+        <input type="password" id="s-notion" placeholder="secret_..." />
+        <div class="field-label" style="margin-top:1rem">Notion Database ID</div>
+        <input type="text" id="s-notion-db" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" />
+      </div>
+      <div class="modal-footer">
+        <button class="btn-primary" onclick="saveSettings()">Save</button>
+        <button class="btn-secondary" onclick="closeSettings()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
