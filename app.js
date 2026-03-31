@@ -3,73 +3,131 @@ const state = {
   ideas: JSON.parse(localStorage.getItem('ideas') || '[]'),
   hooksCount: parseInt(localStorage.getItem('hooksCount') || '0'),
   settings: JSON.parse(localStorage.getItem('settings') || '{}'),
+  customChannels: JSON.parse(localStorage.getItem('customChannels') || '[]'),
+  viralVideos: [],
 };
 
-/* ── SEED DATA ── */
-const VIRAL_DATA = [
-  { p:'yt', title:"HubSpot: The B2B ecommerce automation stack that 10x'd our pipeline", channel:'HubSpot', views:'3.1M', mult:'5.4x avg', days:'2 days ago' },
-  { p:'li', title:"Shopify Plus: Why B2B buyers want self-serve — and what to do about it", channel:'Shopify Plus', views:'512K', mult:'4.2x avg', days:'4 days ago' },
-  { p:'yt', title:"Salesforce: The real reason B2B customers churn in year one", channel:'Salesforce', views:'1.9M', mult:'3.9x avg', days:'5 days ago' },
-  { p:'tt', title:"Gorgias: What happens when you automate B2B customer support", channel:'Gorgias', views:'388K', mult:'6.3x avg', days:'3 days ago' },
-  { p:'li', title:"Justin Welsh: How I grew a B2B audience to 500K without paid ads", channel:'Justin Welsh', views:'820K', mult:'7.1x avg', days:'6 days ago' },
-  { p:'ig', title:"Klaviyo: One email sequence that lifted B2B repeat orders by 41%", channel:'Klaviyo', views:'97K', mult:'3.6x avg', days:'4 days ago' },
-  { p:'yt', title:"Sam Jacobs: The cold outreach mistake killing B2B ecommerce deals", channel:'Pavilion', views:'241K', mult:'4.8x avg', days:'1 day ago' },
+/* ── DEFAULT CHANNELS ── */
+const DEFAULT_CHANNELS = [
+  { id:'UCWTFGPpNQ0Ms6afXhaWDiRw', name:'HubSpot', av:'av-blue', init:'HS', tier:'enterprise', badge:'hot', type:'Enterprise · YT + LI + IG', subs:'—', freq:'3.2/wk', growth:'+18%', ytUrl:'https://www.youtube.com/@HubSpot', liUrl:'https://www.linkedin.com/company/hubspot/' },
+  { id:'UCKcqXmCES-virgTVsvEOfsg', name:'Salesforce', av:'av-teal', init:'SF', tier:'enterprise', badge:'', type:'Enterprise · YT + LI', subs:'—', freq:'2.8/wk', growth:'+11%', ytUrl:'https://www.youtube.com/@salesforce', liUrl:'https://www.linkedin.com/company/salesforce/' },
+  { id:'UCVHyhZhBDyJFpPbDHOmHmCw', name:'Shopify', av:'av-amber', init:'SP', tier:'growing', badge:'rising', type:'Mid-market · LI + YT', subs:'—', freq:'5.1/wk', growth:'+31%', ytUrl:'https://www.youtube.com/@shopify', liUrl:'https://www.linkedin.com/company/shopify/' },
+  { id:'UCNlBODbbfPKT7PQfkKPTa8A', name:'Klaviyo', av:'av-purple', init:'KV', tier:'growing', badge:'rising', type:'Mid-market · YT + IG', subs:'—', freq:'2.9/wk', growth:'+24%', ytUrl:'https://www.youtube.com/@klaviyo', igUrl:'https://www.instagram.com/klaviyo/' },
+  { id:'UCqOKvAOb3RhMp-IUbGkMFUg', name:'Gorgias', av:'av-coral', init:'GG', tier:'growing', badge:'hot', type:'Startup · TT + IG', subs:'—', freq:'7/wk', growth:'+69%', ttUrl:'https://www.tiktok.com/@gorgias', igUrl:'https://www.instagram.com/gorgias.cx/' },
+  { id:'', name:'Justin Welsh', av:'av-brand', init:'JW', tier:'founders', badge:'hot', type:'Solo founder · LI + YT', subs:'530K followers', freq:'5/wk', growth:'+41%', liUrl:'https://www.linkedin.com/in/justinwelsh/', ytUrl:'https://www.youtube.com/@JustinWelsh' },
+  { id:'', name:'Gary Vaynerchuk', av:'av-green', init:'GV', tier:'founders', badge:'', type:'Founder · All platforms', subs:'11M+ followers', freq:'14/wk', growth:'+8%', ytUrl:'https://www.youtube.com/@garyvee', liUrl:'https://www.linkedin.com/in/garyvaynerchuk/' },
 ];
 
-const CHANNELS = {
-  enterprise: [
-    { av:'av-blue', init:'HS', name:'HubSpot', badge:'hot', type:'Enterprise · YT + LI + IG', subs:'6.4M subs', freq:'3.2/wk', growth:'+18%' },
-    { av:'av-teal', init:'SF', name:'Salesforce', badge:'', type:'Enterprise · YT + LI', subs:'4.1M subs', freq:'2.8/wk', growth:'+11%' },
-  ],
-  growing: [
-    { av:'av-amber', init:'SP', name:'Shopify Plus', badge:'rising', type:'Mid-market · LI + YT', subs:'890K followers', freq:'5.1/wk', growth:'+31%' },
-    { av:'av-purple', init:'KV', name:'Klaviyo', badge:'rising', type:'Mid-market · YT + IG', subs:'218K subs', freq:'2.9/wk', growth:'+24%' },
-    { av:'av-coral', init:'GG', name:'Gorgias', badge:'hot', type:'Startup · TT + IG', subs:'131K followers', freq:'7/wk', growth:'+69%' },
-    { av:'av-green', init:'RH', name:'Recharge', badge:'new', type:'Startup · LI + YT', subs:'44K followers', freq:'4/wk', growth:'+52%' },
-  ],
-  founders: [
-    { av:'av-blue', init:'JW', name:'Justin Welsh', badge:'hot', type:'Solo founder · LI + YT', subs:'530K followers', freq:'5/wk', growth:'+41%' },
-    { av:'av-teal', init:'GV', name:'Gary Vaynerchuk', badge:'', type:'Founder · All platforms', subs:'11M+ followers', freq:'14/wk', growth:'+8%' },
-  ],
-};
-
-const BADGE_MAP = { hot:'badge-hot', new:'badge-new', rising:'badge-rising' };
+const STATIC_VIRAL = [
+  { p:'li', title:"Shopify Plus: Why B2B buyers want self-serve — and what to do about it", channel:'Shopify Plus', views:'512K', mult:'4.2x avg', days:'4 days ago', url:'https://www.linkedin.com/company/shopify/' },
+  { p:'tt', title:"Gorgias: What happens when you automate B2B customer support", channel:'Gorgias', views:'388K', mult:'6.3x avg', days:'3 days ago', url:'https://www.tiktok.com/@gorgias' },
+  { p:'li', title:"Justin Welsh: How I grew a B2B audience to 500K without paid ads", channel:'Justin Welsh', views:'820K', mult:'7.1x avg', days:'6 days ago', url:'https://www.linkedin.com/in/justinwelsh/' },
+  { p:'ig', title:"Klaviyo: One email sequence that lifted B2B repeat orders by 41%", channel:'Klaviyo', views:'97K', mult:'3.6x avg', days:'4 days ago', url:'https://www.instagram.com/klaviyo/' },
+];
 
 /* ── INIT ── */
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   setWeekLabel();
-  renderViral('all');
-  renderChannels();
   renderIdeas();
   updateMetrics();
   loadSettingsUI();
   updateNotionStatus();
+  await loadYouTubeData();
+  renderChannels();
 });
 
 function setWeekLabel() {
   const now = new Date();
   const week = getWeekNumber(now);
   document.getElementById('week-label').textContent =
-    `Weekly report · Week ${week}, ${now.toLocaleString('en', { month: 'long', year: 'numeric' })}`;
+    `Weekly report · Week ${week}, ${now.toLocaleString('en',{month:'long',year:'numeric'})}`;
 }
-
 function getWeekNumber(d) {
-  const start = new Date(d.getFullYear(), 0, 1);
-  return Math.ceil(((d - start) / 86400000 + start.getDay() + 1) / 7);
+  const start = new Date(d.getFullYear(),0,1);
+  return Math.ceil(((d-start)/86400000+start.getDay()+1)/7);
+}
+function updateMetrics() {
+  document.getElementById('m-channels').textContent = DEFAULT_CHANNELS.length + state.customChannels.length;
+  document.getElementById('m-ideas').textContent = state.ideas.length;
+  document.getElementById('m-hooks').textContent = state.hooksCount;
+  document.getElementById('m-viral').textContent = state.viralVideos.length + STATIC_VIRAL.length;
 }
 
-function updateMetrics() {
-  document.getElementById('m-ideas').textContent = state.ideas.length || '0';
-  document.getElementById('m-hooks').textContent = state.hooksCount || '0';
-  document.getElementById('m-viral').textContent = VIRAL_DATA.length;
+/* ── YOUTUBE API ── */
+async function loadYouTubeData() {
+  const key = state.settings.youtubeKey;
+  if (!key) { renderViral('all'); return; }
+  const allChannels = [...DEFAULT_CHANNELS, ...state.customChannels].filter(c => c.id);
+  const videos = [];
+  for (const ch of allChannels) {
+    try {
+      const res = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${key}&channelId=${ch.id}&part=snippet&order=viewCount&type=video&maxResults=3&publishedAfter=${getOneWeekAgo()}`);
+      const data = await res.json();
+      if (!data.items) continue;
+      for (const item of data.items) {
+        const vid = item.id.videoId;
+        const sRes = await fetch(`https://www.googleapis.com/youtube/v3/videos?key=${key}&id=${vid}&part=statistics`);
+        const sData = await sRes.json();
+        const views = parseInt(sData.items?.[0]?.statistics?.viewCount||0);
+        videos.push({
+          p:'yt', title:item.snippet.title, channel:ch.name,
+          views:formatViews(views), rawViews:views, mult:'',
+          days:timeAgo(item.snippet.publishedAt),
+          url:`https://www.youtube.com/watch?v=${vid}`,
+        });
+      }
+    } catch(e) { console.warn('YT error:', ch.name, e.message); }
+  }
+  videos.sort((a,b)=>b.rawViews-a.rawViews);
+  const avg = videos.reduce((s,v)=>s+v.rawViews,0)/(videos.length||1);
+  videos.forEach(v=>{ v.mult=(v.rawViews/avg).toFixed(1)+'x avg'; });
+  state.viralVideos = videos;
+  renderViral('all');
+  await loadChannelStats();
+  updateMetrics();
+}
+
+async function loadChannelStats() {
+  const key = state.settings.youtubeKey;
+  if (!key) return;
+  const all = [...DEFAULT_CHANNELS,...state.customChannels].filter(c=>c.id);
+  for (const ch of all) {
+    try {
+      const res = await fetch(`https://www.googleapis.com/youtube/v3/channels?key=${key}&id=${ch.id}&part=statistics`);
+      const data = await res.json();
+      const s = data.items?.[0]?.statistics;
+      if (s) ch.subs = formatViews(parseInt(s.subscriberCount||0))+' subs';
+    } catch(e) {}
+  }
+  renderChannels();
+}
+
+function getOneWeekAgo() {
+  const d = new Date(); d.setDate(d.getDate()-7); return d.toISOString();
+}
+function formatViews(n) {
+  if (n>=1000000) return (n/1000000).toFixed(1)+'M';
+  if (n>=1000) return Math.round(n/1000)+'K';
+  return n.toString();
+}
+function timeAgo(dateStr) {
+  const diff = Math.floor((Date.now()-new Date(dateStr))/86400000);
+  if (diff===0) return 'today';
+  if (diff===1) return '1 day ago';
+  return `${diff} days ago`;
 }
 
 /* ── VIRAL FINDER ── */
 function renderViral(filter) {
   const list = document.getElementById('viral-list');
-  const items = filter === 'all' ? VIRAL_DATA : VIRAL_DATA.filter(v => v.p === filter);
-  list.innerHTML = items.map(v => `
-    <div class="viral-item" data-p="${v.p}" onclick="analyzeThis('${v.title.replace(/'/g,"\\'")}')">
+  const combined = [...state.viralVideos, ...STATIC_VIRAL];
+  const items = filter==='all' ? combined : combined.filter(v=>v.p===filter);
+  if (!items.length) {
+    list.innerHTML = `<div style="font-size:13px;color:#aac0d8;padding:1rem 0">No videos found. Add your YouTube API key in Settings.</div>`;
+    return;
+  }
+  list.innerHTML = items.map(v=>`
+    <div class="viral-item" onclick="openVideo('${v.url||''}','${v.title.replace(/'/g,"\\'")}')">
       <div class="platform-dot dot-${v.p}"></div>
       <div>
         <div class="viral-title">${v.title}</div>
@@ -82,56 +140,96 @@ function renderViral(filter) {
     </div>`).join('');
 }
 
-function platformName(p) {
-  return { yt:'YouTube', li:'LinkedIn', ig:'Instagram', tt:'TikTok' }[p] || p;
+function openVideo(url, title) {
+  if (url && url!=='undefined') window.open(url,'_blank');
+  else analyzeThis(title);
 }
-
-function filterPlatform(btn, p) {
-  document.querySelectorAll('.pf').forEach(b => b.classList.remove('on'));
+function platformName(p) {
+  return {yt:'YouTube',li:'LinkedIn',ig:'Instagram',tt:'TikTok'}[p]||p;
+}
+function filterPlatform(btn,p) {
+  document.querySelectorAll('.pf').forEach(b=>b.classList.remove('on'));
   btn.classList.add('on');
   renderViral(p);
 }
+function loadMoreViral() { loadYouTubeData(); }
 
-function loadMoreViral() {
-  alert('Connect your YouTube API key in Settings to load live viral data.');
-}
+/* ── CHANNEL TRACKER ── */
+const BADGE_MAP = {hot:'badge-hot',new:'badge-new',rising:'badge-rising'};
 
-/* ── CHANNELS ── */
 function renderChannels() {
-  renderChannelGroup('channels-enterprise', CHANNELS.enterprise);
-  renderChannelGroup('channels-growing', CHANNELS.growing, true);
-  renderChannelGroup('channels-founders', CHANNELS.founders, true);
+  const all = [...DEFAULT_CHANNELS,...state.customChannels];
+  renderChannelGroup('channels-enterprise', all.filter(c=>c.tier==='enterprise'));
+  renderChannelGroup('channels-growing', all.filter(c=>c.tier==='growing'), true);
+  renderChannelGroup('channels-founders', all.filter(c=>c.tier==='founders'), true);
 }
 
-function renderChannelGroup(id, channels, addButton = false) {
+function renderChannelGroup(id, channels, addButton=false) {
   const el = document.getElementById(id);
-  let html = channels.map(c => `
+  if (!el) return;
+  let html = channels.map(c=>{
+    const links = buildChannelLinks(c);
+    return `
     <div class="channel-card">
       <div class="channel-top">
         <div class="avatar ${c.av}">${c.init}</div>
         <div>
-          <div class="channel-name">${c.name}${c.badge ? `<span class="badge ${BADGE_MAP[c.badge]}">${c.badge}</span>` : ''}</div>
+          <div class="channel-name">${c.name}${c.badge?`<span class="badge ${BADGE_MAP[c.badge]}">${c.badge}</span>`:''}</div>
           <div class="channel-type">${c.type}</div>
         </div>
       </div>
       <div class="channel-stats">
-        <div class="stat"><strong>${c.subs}</strong></div>
-        <div class="stat"><strong>${c.freq}</strong> posts</div>
-        <div class="stat"><strong>${c.growth}</strong> growth</div>
+        <div class="stat"><strong>${c.subs||'—'}</strong></div>
+        <div class="stat"><strong>${c.freq||'—'}</strong> posts</div>
+        <div class="stat"><strong>${c.growth||'—'}</strong></div>
       </div>
-    </div>`).join('');
-  if (addButton) {
-    html += `<div class="add-channel" onclick="suggestChannels()">+ Add channel</div>`;
-  }
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">${links}</div>
+    </div>`;
+  }).join('');
+  if (addButton) html += `<div class="add-channel" onclick="showAddChannel()">+ Add channel</div>`;
   el.innerHTML = html;
 }
 
-function suggestChannels() {
-  callClaude(
-    'Recommend 5 English-speaking B2B ecommerce channels or founder personal brands to track. Mix of YouTube, LinkedIn, TikTok, Instagram. Focus on creators producing viral content about B2B sales, customer success, and ecommerce growth.',
-    'analyze-result'
-  );
-  switchTab('analyze', document.querySelectorAll('.tab')[2]);
+function buildChannelLinks(c) {
+  const links = [];
+  if (c.ytUrl) links.push(`<a class="channel-link" href="${c.ytUrl}" target="_blank">▶ YouTube</a>`);
+  if (c.liUrl) links.push(`<a class="channel-link" href="${c.liUrl}" target="_blank">in LinkedIn</a>`);
+  if (c.igUrl) links.push(`<a class="channel-link" href="${c.igUrl}" target="_blank">◎ Instagram</a>`);
+  if (c.ttUrl) links.push(`<a class="channel-link" href="${c.ttUrl}" target="_blank">♪ TikTok</a>`);
+  return links.join('');
+}
+
+/* ── ADD CHANNEL ── */
+function showAddChannel() {
+  document.getElementById('add-channel-overlay').classList.remove('hidden');
+}
+function closeAddChannel() {
+  document.getElementById('add-channel-overlay').classList.add('hidden');
+  document.getElementById('new-channel-id').value='';
+  document.getElementById('new-channel-name').value='';
+  document.getElementById('new-channel-yt').value='';
+  document.getElementById('new-channel-li').value='';
+}
+function closeAddOutside(e) {
+  if (e.target.id==='add-channel-overlay') closeAddChannel();
+}
+async function saveNewChannel() {
+  const name = document.getElementById('new-channel-name').value.trim();
+  if (!name) { alert('Please enter a channel name.'); return; }
+  const id = document.getElementById('new-channel-id').value.trim();
+  const ytUrl = document.getElementById('new-channel-yt').value.trim();
+  const liUrl = document.getElementById('new-channel-li').value.trim();
+  const tier = document.getElementById('new-channel-tier').value;
+  const initials = name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  const avColors = ['av-blue','av-teal','av-amber','av-purple','av-coral','av-green'];
+  const av = avColors[state.customChannels.length % avColors.length];
+  const ch = { id, name, av, init:initials, tier, badge:'new', type:`${tier.charAt(0).toUpperCase()+tier.slice(1)} · YT`, subs:'—', freq:'—', growth:'—', ytUrl, liUrl };
+  state.customChannels.push(ch);
+  localStorage.setItem('customChannels', JSON.stringify(state.customChannels));
+  closeAddChannel();
+  renderChannels();
+  updateMetrics();
+  if (id && state.settings.youtubeKey) await loadChannelStats();
 }
 
 /* ── HOOK ANALYZER ── */
@@ -146,7 +244,7 @@ function analyzeHook() {
   if (!v) return;
   incrementHooks();
   callClaude(
-    `Analyze this B2B ecommerce hook: "${v}"\n\nBreak down:\n1. Psychological triggers used\n2. Hook structure/framework\n3. Why it works for B2B ecommerce audience\n4. 5 improved variations for YouTube, LinkedIn, and Instagram Reels`,
+    `Analyze this B2B ecommerce hook: "${v}"\n\n1. Psychological triggers used\n2. Hook structure & framework\n3. Why it works for a B2B ecommerce audience\n4. 5 improved variations for YouTube, LinkedIn, and Instagram Reels`,
     'analyze-result'
   );
 }
@@ -156,7 +254,7 @@ function generateHooks() {
   const base = v ? `Using "${v}" as reference, generate` : 'Generate';
   incrementHooks();
   callClaude(
-    `${base} 10 viral-ready hooks for a B2B ecommerce brand. Give platform-specific versions for YouTube titles, LinkedIn posts, and Instagram Reels. Focus on pain points, contrarian angles, and data-backed hooks.`,
+    `${base} 10 viral-ready hooks for a B2B ecommerce brand.\n\nGive platform-specific versions:\n- 3 YouTube titles\n- 4 LinkedIn post openers\n- 3 Instagram Reels hooks\n\nFocus on pain points, contrarian angles, and data-backed hooks.`,
     'analyze-result'
   );
 }
@@ -164,15 +262,14 @@ function generateHooks() {
 function generateScript() {
   const v = document.getElementById('hook-input').value.trim();
   const base = v ? `"${v}"` : 'a strong B2B ecommerce hook';
+  incrementHooks();
   callClaude(
-    `Write a full short-form video script based on ${base}.\n\nStructure:\n- Hook (0–3s)\n- Problem setup (3–15s)\n- Insight/tension (15–40s)\n- Payoff + CTA (40–60s)\n\nOptimize for LinkedIn and YouTube Shorts. B2B ecommerce audience.`,
+    `Write a full short-form video script based on ${base}.\n\nStructure:\n- Hook (0–3s): attention grab\n- Problem setup (3–15s): agitate the pain\n- Insight/tension (15–40s): the surprising truth\n- Payoff + CTA (40–60s): solution + next step\n\nOptimized for LinkedIn and YouTube Shorts. B2B ecommerce audience.`,
     'analyze-result'
   );
 }
 
-function useStarter(text) {
-  document.getElementById('hook-input').value = text;
-}
+function useStarter(text) { document.getElementById('hook-input').value = text; }
 
 function incrementHooks() {
   state.hooksCount++;
@@ -184,10 +281,10 @@ function incrementHooks() {
 function saveIdea() {
   const v = document.getElementById('idea-input').value.trim();
   if (!v) return;
-  const idea = { id: Date.now(), text: v, date: new Date().toLocaleDateString('en'), status: 'note' };
+  const idea = { id:Date.now(), text:v, date:new Date().toLocaleDateString('en'), status:'note' };
   state.ideas.unshift(idea);
   localStorage.setItem('ideas', JSON.stringify(state.ideas));
-  document.getElementById('idea-input').value = '';
+  document.getElementById('idea-input').value='';
   renderIdeas();
   updateMetrics();
   if (state.settings.notionKey && state.settings.notionDb) syncToNotion(idea);
@@ -196,34 +293,28 @@ function saveIdea() {
 function developIdea() {
   const v = document.getElementById('idea-input').value.trim();
   if (!v) { alert('Enter an idea first.'); return; }
-  callClaude(
-    `Develop this B2B ecommerce content idea into a complete short-form video script: "${v}"\n\nInclude hook, story arc, key insight, and CTA. Works for both LinkedIn and YouTube Shorts.`,
-    'analyze-result'
-  );
+  callClaude(`Develop this B2B ecommerce content idea into a complete short-form video script: "${v}"\n\nInclude hook, story arc, key insight, and CTA. Works for LinkedIn and YouTube Shorts.`, 'analyze-result');
   switchTab('analyze', document.querySelectorAll('.tab')[2]);
 }
 
 function repurposeIdea() {
   const v = document.getElementById('idea-input').value.trim();
   if (!v) { alert('Enter an idea first.'); return; }
-  callClaude(
-    `Repurpose this idea into 4 platform-specific content pieces for a B2B ecommerce brand: "${v}"\n\n1. LinkedIn post\n2. YouTube Shorts script\n3. Instagram Reels hook + script\n4. TikTok script\n\nEach should feel native to the platform.`,
-    'analyze-result'
-  );
+  callClaude(`Repurpose this idea for a B2B ecommerce brand: "${v}"\n\n1. LinkedIn post (with hook + body + CTA)\n2. YouTube Shorts script\n3. Instagram Reels hook + script\n4. TikTok script\n\nMake each feel native to the platform.`, 'analyze-result');
   switchTab('analyze', document.querySelectorAll('.tab')[2]);
 }
 
 function renderIdeas() {
   const list = document.getElementById('idea-list');
   if (!state.ideas.length) {
-    list.innerHTML = `<div style="font-size:13px;color:#aaa;padding:.5rem 0">No ideas saved yet.</div>`;
+    list.innerHTML=`<div style="font-size:13px;color:#aac0d8;padding:.5rem 0">No ideas saved yet.</div>`;
     return;
   }
-  list.innerHTML = state.ideas.map(idea => `
+  list.innerHTML = state.ideas.map(idea=>`
     <div class="viral-item">
-      <div class="platform-dot" style="background:#9FE1CB"></div>
+      <div class="platform-dot" style="background:var(--brand)"></div>
       <div>
-        <div class="viral-title">${idea.text.substring(0, 80)}${idea.text.length > 80 ? '…' : ''}</div>
+        <div class="viral-title">${idea.text.substring(0,80)}${idea.text.length>80?'…':''}</div>
         <div class="viral-meta">${idea.date}</div>
       </div>
       <div style="text-align:right">
@@ -236,7 +327,7 @@ function renderIdeas() {
 }
 
 function deleteIdea(id) {
-  state.ideas = state.ideas.filter(i => i.id !== id);
+  state.ideas = state.ideas.filter(i=>i.id!==id);
   localStorage.setItem('ideas', JSON.stringify(state.ideas));
   renderIdeas();
   updateMetrics();
@@ -246,66 +337,57 @@ function deleteIdea(id) {
 async function callClaude(prompt, resultId) {
   const key = state.settings.anthropicKey;
   if (!key) {
-    showResult(resultId, 'Add your Anthropic API key in Settings to use AI features.', true);
+    showResult(resultId,'Add your Anthropic API key in Settings to use AI features.',true);
     return;
   }
-  showResult(resultId, 'Analyzing...', true);
+  showResult(resultId,'Analyzing…',true);
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': key,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true',
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':key,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true',
       },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }],
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        messages:[{role:'user',content:prompt}],
       }),
     });
     const data = await res.json();
-    const text = data.content?.[0]?.text || 'No response received.';
-    showResult(resultId, text, false);
-  } catch (e) {
-    showResult(resultId, 'Error: ' + e.message, true);
-  }
+    const text = data.content?.[0]?.text||'No response received.';
+    showResult(resultId,text,false);
+  } catch(e) { showResult(resultId,'Error: '+e.message,true); }
 }
 
-function showResult(id, text, isLoading) {
+function showResult(id,text,isLoading) {
   const el = document.getElementById(id);
   if (!el) return;
-  el.classList.remove('hidden', 'loading');
+  el.classList.remove('hidden','loading');
   if (isLoading) el.classList.add('loading');
-  el.textContent = text;
+  el.textContent=text;
 }
 
 /* ── NOTION SYNC ── */
 async function syncToNotion(idea) {
-  const { notionKey, notionDb } = state.settings;
-  if (!notionKey || !notionDb) return;
+  const {notionKey,notionDb} = state.settings;
+  if (!notionKey||!notionDb) return;
   try {
-    await fetch('https://api.notion.com/v1/pages', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${notionKey}`,
-        'Content-Type': 'application/json',
-        'Notion-Version': '2022-06-28',
-      },
-      body: JSON.stringify({
-        parent: { database_id: notionDb },
-        properties: {
-          Name: { title: [{ text: { content: idea.text.substring(0, 100) } }] },
-          Date: { date: { start: new Date().toISOString().split('T')[0] } },
-          Status: { select: { name: 'Note' } },
-          Platform: { select: { name: 'B2B Ecommerce' } },
+    await fetch('https://api.notion.com/v1/pages',{
+      method:'POST',
+      headers:{'Authorization':`Bearer ${notionKey}`,'Content-Type':'application/json','Notion-Version':'2022-06-28'},
+      body:JSON.stringify({
+        parent:{database_id:notionDb},
+        properties:{
+          Name:{title:[{text:{content:idea.text.substring(0,100)}}]},
+          Date:{date:{start:new Date().toISOString().split('T')[0]}},
+          Status:{select:{name:'Note'}},
         },
       }),
     });
-  } catch (e) {
-    console.warn('Notion sync failed:', e.message);
-  }
+  } catch(e) { console.warn('Notion sync failed:',e.message); }
 }
 
 /* ── SETTINGS ── */
@@ -313,39 +395,36 @@ function openSettings() {
   document.getElementById('settings-overlay').classList.remove('hidden');
   loadSettingsUI();
 }
-function closeSettings() {
-  document.getElementById('settings-overlay').classList.add('hidden');
-}
-function closeSettingsOutside(e) {
-  if (e.target.id === 'settings-overlay') closeSettings();
-}
+function closeSettings() { document.getElementById('settings-overlay').classList.add('hidden'); }
+function closeSettingsOutside(e) { if(e.target.id==='settings-overlay') closeSettings(); }
 function loadSettingsUI() {
-  document.getElementById('s-anthropic').value = state.settings.anthropicKey || '';
-  document.getElementById('s-youtube').value = state.settings.youtubeKey || '';
-  document.getElementById('s-notion').value = state.settings.notionKey || '';
-  document.getElementById('s-notion-db').value = state.settings.notionDb || '';
+  document.getElementById('s-anthropic').value = state.settings.anthropicKey||'';
+  document.getElementById('s-youtube').value = state.settings.youtubeKey||'';
+  document.getElementById('s-notion').value = state.settings.notionKey||'';
+  document.getElementById('s-notion-db').value = state.settings.notionDb||'';
 }
-function saveSettings() {
-  state.settings = {
-    anthropicKey: document.getElementById('s-anthropic').value.trim(),
-    youtubeKey: document.getElementById('s-youtube').value.trim(),
-    notionKey: document.getElementById('s-notion').value.trim(),
-    notionDb: document.getElementById('s-notion-db').value.trim(),
+async function saveSettings() {
+  state.settings={
+    anthropicKey:document.getElementById('s-anthropic').value.trim(),
+    youtubeKey:document.getElementById('s-youtube').value.trim(),
+    notionKey:document.getElementById('s-notion').value.trim(),
+    notionDb:document.getElementById('s-notion-db').value.trim(),
   };
-  localStorage.setItem('settings', JSON.stringify(state.settings));
+  localStorage.setItem('settings',JSON.stringify(state.settings));
   closeSettings();
   updateNotionStatus();
+  await loadYouTubeData();
 }
 function updateNotionStatus() {
-  const connected = !!(state.settings.notionKey && state.settings.notionDb);
-  document.getElementById('notion-status').className = `notion-status-dot ${connected ? 'on' : 'off'}`;
-  document.getElementById('notion-status-text').textContent = connected ? 'Connected' : 'Not connected';
+  const ok = !!(state.settings.notionKey&&state.settings.notionDb);
+  document.getElementById('notion-status').className=`notion-status-dot ${ok?'on':'off'}`;
+  document.getElementById('notion-status-text').textContent=ok?'Connected':'Not connected';
 }
 
 /* ── TABS ── */
-function switchTab(name, btn) {
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
-  if (btn) btn.classList.add('active');
+function switchTab(name,btn) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  if(btn) btn.classList.add('active');
 }
