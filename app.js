@@ -6,25 +6,29 @@ const state = {
   customChannels: JSON.parse(localStorage.getItem('customChannels') || '[]'),
   viralVideos: [],
 };
-
 /* ── DEFAULT CHANNELS ── */
 const DEFAULT_CHANNELS = [
-  { id:'UCWTFGPpNQ0Ms6afXhaWDiRw', name:'HubSpot', av:'av-blue', init:'HS', tier:'enterprise', badge:'hot', type:'Enterprise · YT + LI + IG', subs:'—', freq:'3.2/wk', growth:'+18%', ytUrl:'https://www.youtube.com/@HubSpot', liUrl:'https://www.linkedin.com/company/hubspot/' },
-  { id:'UCKcqXmCES-virgTVsvEOfsg', name:'Salesforce', av:'av-teal', init:'SF', tier:'enterprise', badge:'', type:'Enterprise · YT + LI', subs:'—', freq:'2.8/wk', growth:'+11%', ytUrl:'https://www.youtube.com/@salesforce', liUrl:'https://www.linkedin.com/company/salesforce/' },
-  { id:'UCVHyhZhBDyJFpPbDHOmHmCw', name:'Shopify', av:'av-amber', init:'SP', tier:'growing', badge:'rising', type:'Mid-market · LI + YT', subs:'—', freq:'5.1/wk', growth:'+31%', ytUrl:'https://www.youtube.com/@shopify', liUrl:'https://www.linkedin.com/company/shopify/' },
-  { id:'UCNlBODbbfPKT7PQfkKPTa8A', name:'Klaviyo', av:'av-purple', init:'KV', tier:'growing', badge:'rising', type:'Mid-market · YT + IG', subs:'—', freq:'2.9/wk', growth:'+24%', ytUrl:'https://www.youtube.com/@klaviyo', igUrl:'https://www.instagram.com/klaviyo/' },
-  { id:'UCqOKvAOb3RhMp-IUbGkMFUg', name:'Gorgias', av:'av-coral', init:'GG', tier:'growing', badge:'hot', type:'Startup · TT + IG', subs:'—', freq:'7/wk', growth:'+69%', ttUrl:'https://www.tiktok.com/@gorgias', igUrl:'https://www.instagram.com/gorgias.cx/' },
-  { id:'', name:'Justin Welsh', av:'av-brand', init:'JW', tier:'founders', badge:'hot', type:'Solo founder · LI + YT', subs:'530K followers', freq:'5/wk', growth:'+41%', liUrl:'https://www.linkedin.com/in/justinwelsh/', ytUrl:'https://www.youtube.com/@JustinWelsh' },
-  { id:'', name:'Gary Vaynerchuk', av:'av-green', init:'GV', tier:'founders', badge:'', type:'Founder · All platforms', subs:'11M+ followers', freq:'14/wk', growth:'+8%', ytUrl:'https://www.youtube.com/@garyvee', liUrl:'https://www.linkedin.com/in/garyvaynerchuk/' },
+  { id:'UCWTFGPpNQ0Ms6afXhaWDiRw', name:'HubSpot', av:'av-blue', init:'HS', tier:'enterprise', badge:'hot', type:'Enterprise · YT + LI + IG', subs:'—', freq:'3.2/wk', growth:'+18%', ytUrl:'https://www.youtube.com/@HubSpot', liUrl:'https://www.linkedin.com/company/hubspot/',
+    why:'HubSpot consistently shows how to turn complex B2B processes into simple, customer-friendly content. Their educational style builds trust — exactly what B2B ecommerce brands need to convert hesitant buyers.' },
+  { id:'UCKcqXmCES-virgTVsvEOfsg', name:'Salesforce', av:'av-teal', init:'SF', tier:'enterprise', badge:'', type:'Enterprise · YT + LI', subs:'—', freq:'2.8/wk', growth:'+11%', ytUrl:'https://www.youtube.com/@salesforce', liUrl:'https://www.linkedin.com/company/salesforce/',
+    why:'Salesforce masters the art of making enterprise-level solutions feel accessible. Their customer success stories are a masterclass in B2B storytelling that resonates with decision-makers.' },
+  { id:'UCVHyhZhBDyJFpPbDHOmHmCw', name:'Shopify', av:'av-amber', init:'SP', tier:'growing', badge:'rising', type:'Mid-market · LI + YT', subs:'—', freq:'5.1/wk', growth:'+31%', ytUrl:'https://www.youtube.com/@shopify', liUrl:'https://www.linkedin.com/company/shopify/',
+    why:'Shopify Plus bridges the gap between ecommerce simplicity and B2B complexity. Their content directly addresses the self-serve buying journey that modern B2B customers demand.' },
+  { id:'UCNlBODbbfPKT7PQfkKPTa8A', name:'Klaviyo', av:'av-purple', init:'KV', tier:'growing', badge:'rising', type:'Mid-market · YT + IG', subs:'—', freq:'2.9/wk', growth:'+24%', ytUrl:'https://www.youtube.com/@klaviyo', igUrl:'https://www.instagram.com/klaviyo/',
+    why:'Klaviyo proves that data-driven content builds lasting B2B relationships. Their focus on retention and repeat orders aligns perfectly with the B2B ecommerce growth model.' },
+  { id:'UCqOKvAOb3RhMp-IUbGkMFUg', name:'Gorgias', av:'av-coral', init:'GG', tier:'growing', badge:'hot', type:'Startup · TT + IG', subs:'—', freq:'7/wk', growth:'+69%', ttUrl:'https://www.tiktok.com/@gorgias', igUrl:'https://www.instagram.com/gorgias.cx/',
+    why:'Gorgias shows how automation can feel human. Their content reframes CS automation as a relationship builder — critical for B2B brands where customer trust drives repeat business.' },
+  { id:'', name:'Justin Welsh', av:'av-brand', init:'JW', tier:'founders', badge:'hot', type:'Solo founder · LI + YT', subs:'530K followers', freq:'5/wk', growth:'+41%', liUrl:'https://www.linkedin.com/in/justinwelsh/', ytUrl:'https://www.youtube.com/@JustinWelsh',
+    why:'Justin Welsh\'s content framework — short, punchy, insight-first — is the gold standard for B2B LinkedIn. His audience-building playbook is directly applicable to B2B ecommerce brand pages.' },
+  { id:'', name:'Gary Vaynerchuk', av:'av-green', init:'GV', tier:'founders', badge:'', type:'Founder · All platforms', subs:'11M+ followers', freq:'14/wk', growth:'+8%', ytUrl:'https://www.youtube.com/@garyvee', liUrl:'https://www.linkedin.com/in/garyvaynerchuk/',
+    why:'GaryVee pioneered the "document, don\'t create" approach — showing behind-the-scenes of real business operations. B2B brands can adopt this authenticity to humanize their customer relationships.' },
 ];
-
 const STATIC_VIRAL = [
   { p:'li', title:"Shopify Plus: Why B2B buyers want self-serve — and what to do about it", channel:'Shopify Plus', views:'512K', mult:'4.2x avg', days:'4 days ago', url:'https://www.linkedin.com/company/shopify/' },
   { p:'tt', title:"Gorgias: What happens when you automate B2B customer support", channel:'Gorgias', views:'388K', mult:'6.3x avg', days:'3 days ago', url:'https://www.tiktok.com/@gorgias' },
   { p:'li', title:"Justin Welsh: How I grew a B2B audience to 500K without paid ads", channel:'Justin Welsh', views:'820K', mult:'7.1x avg', days:'6 days ago', url:'https://www.linkedin.com/in/justinwelsh/' },
   { p:'ig', title:"Klaviyo: One email sequence that lifted B2B repeat orders by 41%", channel:'Klaviyo', views:'97K', mult:'3.6x avg', days:'4 days ago', url:'https://www.instagram.com/klaviyo/' },
 ];
-
 /* ── INIT ── */
 document.addEventListener('DOMContentLoaded', async () => {
   setWeekLabel();
@@ -35,7 +39,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadYouTubeData();
   renderChannels();
 });
-
 function setWeekLabel() {
   const now = new Date();
   const week = getWeekNumber(now);
@@ -52,58 +55,39 @@ function updateMetrics() {
   document.getElementById('m-hooks').textContent = state.hooksCount;
   document.getElementById('m-viral').textContent = state.viralVideos.length + STATIC_VIRAL.length;
 }
-
-/* ── YOUTUBE API ── */
+/* ── YOUTUBE API (server-side via Vercel function) ── */
 async function loadYouTubeData() {
-  const key = state.settings.youtubeKey;
-  if (!key) { renderViral('all'); return; }
   const allChannels = [...DEFAULT_CHANNELS, ...state.customChannels].filter(c => c.id);
   const videos = [];
   for (const ch of allChannels) {
     try {
-      const res = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${key}&channelId=${ch.id}&part=snippet&order=viewCount&type=video&maxResults=3&publishedAfter=${getOneWeekAgo()}`);
+      const res = await fetch(`/api/youtube?channelId=${ch.id}`);
       const data = await res.json();
-      if (!data.items) continue;
-      for (const item of data.items) {
-        const vid = item.id.videoId;
-        const sRes = await fetch(`https://www.googleapis.com/youtube/v3/videos?key=${key}&id=${vid}&part=statistics`);
-        const sData = await sRes.json();
-        const views = parseInt(sData.items?.[0]?.statistics?.viewCount||0);
+      if (!data.videos?.length) continue;
+      for (const v of data.videos) {
         videos.push({
-          p:'yt', title:item.snippet.title, channel:ch.name,
-          views:formatViews(views), rawViews:views, mult:'',
-          days:timeAgo(item.snippet.publishedAt),
-          url:`https://www.youtube.com/watch?v=${vid}`,
+          p: 'yt',
+          title: v.title,
+          channel: ch.name,
+          views: formatViews(v.viewCount),
+          rawViews: v.viewCount,
+          mult: '',
+          days: timeAgo(v.publishedAt),
+          url: v.url,
+          thumbnail: v.thumbnail,
         });
+      }
+      if (data.videos[0]) {
+        ch.subs = ch.subs !== '—' ? ch.subs : '—';
       }
     } catch(e) { console.warn('YT error:', ch.name, e.message); }
   }
-  videos.sort((a,b)=>b.rawViews-a.rawViews);
-  const avg = videos.reduce((s,v)=>s+v.rawViews,0)/(videos.length||1);
-  videos.forEach(v=>{ v.mult=(v.rawViews/avg).toFixed(1)+'x avg'; });
+  videos.sort((a,b) => b.rawViews - a.rawViews);
+  const avg = videos.reduce((s,v) => s+v.rawViews, 0) / (videos.length||1);
+  videos.forEach(v => { v.mult = (v.rawViews/avg).toFixed(1)+'x avg'; });
   state.viralVideos = videos;
   renderViral('all');
-  await loadChannelStats();
   updateMetrics();
-}
-
-async function loadChannelStats() {
-  const key = state.settings.youtubeKey;
-  if (!key) return;
-  const all = [...DEFAULT_CHANNELS,...state.customChannels].filter(c=>c.id);
-  for (const ch of all) {
-    try {
-      const res = await fetch(`https://www.googleapis.com/youtube/v3/channels?key=${key}&id=${ch.id}&part=statistics`);
-      const data = await res.json();
-      const s = data.items?.[0]?.statistics;
-      if (s) ch.subs = formatViews(parseInt(s.subscriberCount||0))+' subs';
-    } catch(e) {}
-  }
-  renderChannels();
-}
-
-function getOneWeekAgo() {
-  const d = new Date(); d.setDate(d.getDate()-7); return d.toISOString();
 }
 function formatViews(n) {
   if (n>=1000000) return (n/1000000).toFixed(1)+'M';
@@ -116,18 +100,17 @@ function timeAgo(dateStr) {
   if (diff===1) return '1 day ago';
   return `${diff} days ago`;
 }
-
 /* ── VIRAL FINDER ── */
 function renderViral(filter) {
   const list = document.getElementById('viral-list');
   const combined = [...state.viralVideos, ...STATIC_VIRAL];
   const items = filter==='all' ? combined : combined.filter(v=>v.p===filter);
   if (!items.length) {
-    list.innerHTML = `<div style="font-size:13px;color:#aac0d8;padding:1rem 0">No videos found. Add your YouTube API key in Settings.</div>`;
+    list.innerHTML = `<div style="font-size:13px;color:#aac0d8;padding:1rem 0">No videos found yet. YouTube data loads automatically.</div>`;
     return;
   }
   list.innerHTML = items.map(v=>`
-    <div class="viral-item" onclick="openVideo('${v.url||''}','${v.title.replace(/'/g,"\\'")}')">
+    <div class="viral-item" onclick="window.open('${v.url||'#'}','_blank')">
       <div class="platform-dot dot-${v.p}"></div>
       <div>
         <div class="viral-title">${v.title}</div>
@@ -139,11 +122,6 @@ function renderViral(filter) {
       </div>
     </div>`).join('');
 }
-
-function openVideo(url, title) {
-  if (url && url!=='undefined') window.open(url,'_blank');
-  else analyzeThis(title);
-}
 function platformName(p) {
   return {yt:'YouTube',li:'LinkedIn',ig:'Instagram',tt:'TikTok'}[p]||p;
 }
@@ -153,23 +131,18 @@ function filterPlatform(btn,p) {
   renderViral(p);
 }
 function loadMoreViral() { loadYouTubeData(); }
-
 /* ── CHANNEL TRACKER ── */
 const BADGE_MAP = {hot:'badge-hot',new:'badge-new',rising:'badge-rising'};
-
 function renderChannels() {
   const all = [...DEFAULT_CHANNELS,...state.customChannels];
   renderChannelGroup('channels-enterprise', all.filter(c=>c.tier==='enterprise'));
   renderChannelGroup('channels-growing', all.filter(c=>c.tier==='growing'), true);
   renderChannelGroup('channels-founders', all.filter(c=>c.tier==='founders'), true);
 }
-
 function renderChannelGroup(id, channels, addButton=false) {
   const el = document.getElementById(id);
   if (!el) return;
-  let html = channels.map(c=>{
-    const links = buildChannelLinks(c);
-    return `
+  let html = channels.map(c => `
     <div class="channel-card">
       <div class="channel-top">
         <div class="avatar ${c.av}">${c.init}</div>
@@ -183,13 +156,15 @@ function renderChannelGroup(id, channels, addButton=false) {
         <div class="stat"><strong>${c.freq||'—'}</strong> posts</div>
         <div class="stat"><strong>${c.growth||'—'}</strong></div>
       </div>
-      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">${links}</div>
-    </div>`;
-  }).join('');
+      ${c.why ? `<div class="channel-why">${c.why}</div>` : ''}
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">${buildChannelLinks(c)}</div>
+      <button class="btn-secondary sm" style="margin-top:8px;width:100%" onclick="getPatternIdeas('${c.name.replace(/'/g,"\\'")}','${(c.why||'').replace(/'/g,"\\'").replace(/\n/g,' ')}')">
+        Get Pattern Inc ideas from this channel ↗
+      </button>
+    </div>`).join('');
   if (addButton) html += `<div class="add-channel" onclick="showAddChannel()">+ Add channel</div>`;
   el.innerHTML = html;
 }
-
 function buildChannelLinks(c) {
   const links = [];
   if (c.ytUrl) links.push(`<a class="channel-link" href="${c.ytUrl}" target="_blank">▶ YouTube</a>`);
@@ -198,17 +173,31 @@ function buildChannelLinks(c) {
   if (c.ttUrl) links.push(`<a class="channel-link" href="${c.ttUrl}" target="_blank">♪ TikTok</a>`);
   return links.join('');
 }
-
+/* ── PATTERN INC IDEAS ── */
+function getPatternIdeas(channelName, whySummary) {
+  const prompt = `You are a content strategist for Pattern Inc — a professional B2B ecommerce accelerator that works closely with brand partners and customers. Pattern Inc creates professional, data-driven video content.
+The channel we're analyzing is: ${channelName}
+Why it's relevant to B2B customer-facing brands: ${whySummary}
+Give me 5 specific content ideas that Pattern Inc can create, inspired by ${channelName}'s content style and topics.
+For each idea:
+1. Video title (professional, B2B ecommerce angle)
+2. Core message (1 sentence)
+3. Why it works for Pattern Inc's brand partners and customers
+4. Recommended platform (YouTube / LinkedIn / both)
+Keep the tone professional and data-backed — Pattern Inc's audience is brand executives and ecommerce decision-makers.`;
+  document.getElementById('analyze-result').classList.remove('hidden');
+  switchTab('analyze', document.querySelectorAll('.tab')[2]);
+  callClaude(prompt, 'analyze-result');
+}
 /* ── ADD CHANNEL ── */
 function showAddChannel() {
   document.getElementById('add-channel-overlay').classList.remove('hidden');
 }
 function closeAddChannel() {
   document.getElementById('add-channel-overlay').classList.add('hidden');
-  document.getElementById('new-channel-id').value='';
-  document.getElementById('new-channel-name').value='';
-  document.getElementById('new-channel-yt').value='';
-  document.getElementById('new-channel-li').value='';
+  ['new-channel-name','new-channel-id','new-channel-yt','new-channel-li'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
 }
 function closeAddOutside(e) {
   if (e.target.id==='add-channel-overlay') closeAddChannel();
@@ -223,60 +212,53 @@ async function saveNewChannel() {
   const initials = name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
   const avColors = ['av-blue','av-teal','av-amber','av-purple','av-coral','av-green'];
   const av = avColors[state.customChannels.length % avColors.length];
-  const ch = { id, name, av, init:initials, tier, badge:'new', type:`${tier.charAt(0).toUpperCase()+tier.slice(1)} · YT`, subs:'—', freq:'—', growth:'—', ytUrl, liUrl };
+  const ch = { id, name, av, init:initials, tier, badge:'new', type:`${tier.charAt(0).toUpperCase()+tier.slice(1)} · YT`, subs:'—', freq:'—', growth:'—', ytUrl, liUrl, why:'' };
   state.customChannels.push(ch);
   localStorage.setItem('customChannels', JSON.stringify(state.customChannels));
   closeAddChannel();
   renderChannels();
   updateMetrics();
-  if (id && state.settings.youtubeKey) await loadChannelStats();
+  if (id) await loadYouTubeData();
 }
-
 /* ── HOOK ANALYZER ── */
 function analyzeThis(title) {
   document.getElementById('hook-input').value = title;
   switchTab('analyze', document.querySelectorAll('.tab')[2]);
   analyzeHook();
 }
-
 function analyzeHook() {
   const v = document.getElementById('hook-input').value.trim();
   if (!v) return;
   incrementHooks();
   callClaude(
-    `Analyze this B2B ecommerce hook: "${v}"\n\n1. Psychological triggers used\n2. Hook structure & framework\n3. Why it works for a B2B ecommerce audience\n4. 5 improved variations for YouTube, LinkedIn, and Instagram Reels`,
+    `Analyze this B2B ecommerce hook: "${v}"\n\n1. Psychological triggers used\n2. Hook structure & framework\n3. Why it works for a B2B ecommerce audience\n4. 5 improved variations for YouTube, LinkedIn, and Instagram Reels\n5. One version adapted for Pattern Inc (professional B2B ecommerce accelerator tone)`,
     'analyze-result'
   );
 }
-
 function generateHooks() {
   const v = document.getElementById('hook-input').value.trim();
   const base = v ? `Using "${v}" as reference, generate` : 'Generate';
   incrementHooks();
   callClaude(
-    `${base} 10 viral-ready hooks for a B2B ecommerce brand.\n\nGive platform-specific versions:\n- 3 YouTube titles\n- 4 LinkedIn post openers\n- 3 Instagram Reels hooks\n\nFocus on pain points, contrarian angles, and data-backed hooks.`,
+    `${base} 10 viral-ready hooks for a B2B ecommerce brand.\n\nGive platform-specific versions:\n- 3 YouTube titles\n- 4 LinkedIn post openers\n- 3 Instagram Reels hooks\n\nFocus on pain points, contrarian angles, and data-backed hooks.\nAlso include 2 versions in a professional tone suited for Pattern Inc (B2B ecommerce accelerator).`,
     'analyze-result'
   );
 }
-
 function generateScript() {
   const v = document.getElementById('hook-input').value.trim();
   const base = v ? `"${v}"` : 'a strong B2B ecommerce hook';
   incrementHooks();
   callClaude(
-    `Write a full short-form video script based on ${base}.\n\nStructure:\n- Hook (0–3s): attention grab\n- Problem setup (3–15s): agitate the pain\n- Insight/tension (15–40s): the surprising truth\n- Payoff + CTA (40–60s): solution + next step\n\nOptimized for LinkedIn and YouTube Shorts. B2B ecommerce audience.`,
+    `Write a full short-form video script based on ${base}.\n\nStructure:\n- Hook (0–3s): attention grab\n- Problem setup (3–15s): agitate the pain\n- Insight/tension (15–40s): the surprising truth\n- Payoff + CTA (40–60s): solution + next step\n\nOptimized for LinkedIn and YouTube Shorts. B2B ecommerce audience.\nAlso write a second version in Pattern Inc's professional, data-driven tone for brand executives.`,
     'analyze-result'
   );
 }
-
 function useStarter(text) { document.getElementById('hook-input').value = text; }
-
 function incrementHooks() {
   state.hooksCount++;
   localStorage.setItem('hooksCount', state.hooksCount);
   updateMetrics();
 }
-
 /* ── IDEA VAULT ── */
 function saveIdea() {
   const v = document.getElementById('idea-input').value.trim();
@@ -289,21 +271,18 @@ function saveIdea() {
   updateMetrics();
   if (state.settings.notionKey && state.settings.notionDb) syncToNotion(idea);
 }
-
 function developIdea() {
   const v = document.getElementById('idea-input').value.trim();
   if (!v) { alert('Enter an idea first.'); return; }
-  callClaude(`Develop this B2B ecommerce content idea into a complete short-form video script: "${v}"\n\nInclude hook, story arc, key insight, and CTA. Works for LinkedIn and YouTube Shorts.`, 'analyze-result');
+  callClaude(`Develop this B2B ecommerce content idea into a complete short-form video script for Pattern Inc (professional B2B ecommerce accelerator): "${v}"\n\nInclude hook, story arc, key insight, and CTA. Professional tone for brand executives. Works for LinkedIn and YouTube.`, 'analyze-result');
   switchTab('analyze', document.querySelectorAll('.tab')[2]);
 }
-
 function repurposeIdea() {
   const v = document.getElementById('idea-input').value.trim();
   if (!v) { alert('Enter an idea first.'); return; }
-  callClaude(`Repurpose this idea for a B2B ecommerce brand: "${v}"\n\n1. LinkedIn post (with hook + body + CTA)\n2. YouTube Shorts script\n3. Instagram Reels hook + script\n4. TikTok script\n\nMake each feel native to the platform.`, 'analyze-result');
+  callClaude(`Repurpose this idea for Pattern Inc (professional B2B ecommerce accelerator): "${v}"\n\n1. LinkedIn post (professional, insight-first)\n2. YouTube script (data-driven, brand executive audience)\n3. Instagram Reels hook + script\n4. Short-form TikTok script\n\nMaintain professional tone throughout.`, 'analyze-result');
   switchTab('analyze', document.querySelectorAll('.tab')[2]);
 }
-
 function renderIdeas() {
   const list = document.getElementById('idea-list');
   if (!state.ideas.length) {
@@ -325,14 +304,12 @@ function renderIdeas() {
       </div>
     </div>`).join('');
 }
-
 function deleteIdea(id) {
   state.ideas = state.ideas.filter(i=>i.id!==id);
   localStorage.setItem('ideas', JSON.stringify(state.ideas));
   renderIdeas();
   updateMetrics();
 }
-
 /* ── CLAUDE API ── */
 async function callClaude(prompt, resultId) {
   const key = state.settings.anthropicKey;
@@ -352,7 +329,7 @@ async function callClaude(prompt, resultId) {
       },
       body:JSON.stringify({
         model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
+        max_tokens:1200,
         messages:[{role:'user',content:prompt}],
       }),
     });
@@ -361,7 +338,6 @@ async function callClaude(prompt, resultId) {
     showResult(resultId,text,false);
   } catch(e) { showResult(resultId,'Error: '+e.message,true); }
 }
-
 function showResult(id,text,isLoading) {
   const el = document.getElementById(id);
   if (!el) return;
@@ -369,7 +345,6 @@ function showResult(id,text,isLoading) {
   if (isLoading) el.classList.add('loading');
   el.textContent=text;
 }
-
 /* ── NOTION SYNC ── */
 async function syncToNotion(idea) {
   const {notionKey,notionDb} = state.settings;
@@ -389,7 +364,6 @@ async function syncToNotion(idea) {
     });
   } catch(e) { console.warn('Notion sync failed:',e.message); }
 }
-
 /* ── SETTINGS ── */
 function openSettings() {
   document.getElementById('settings-overlay').classList.remove('hidden');
@@ -420,7 +394,6 @@ function updateNotionStatus() {
   document.getElementById('notion-status').className=`notion-status-dot ${ok?'on':'off'}`;
   document.getElementById('notion-status-text').textContent=ok?'Connected':'Not connected';
 }
-
 /* ── TABS ── */
 function switchTab(name,btn) {
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
